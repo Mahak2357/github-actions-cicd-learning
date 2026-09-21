@@ -1,0 +1,33 @@
+name: Deploy Distribution
+
+#push = it automattically runs the workflow when a push is made to the repository
+
+#workflow_dispatch= it allows you to manually trigger the workflow from the GitHub Actions tab in your repository
+
+# We use workflow_dispatch when we want to manually control when the workflow runs. For example, we may push several code changes to GitHub, but we don't want to deploy every change to production immediately. When the application is ready, we can manually trigger the deployment workflow.
+
+on: [push,workflow_dispatch]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: get code from the repository
+
+      # | is used to indicate that the following lines are part of a multi-line string. It allows you to write multiple lines of code or text without having to use escape characters for newlines.
+
+      # ${{ ... }}   is used to access GitHub Actions context and expression syntax. It allows you to retrieve information about the workflow run, repository, and other relevant data.
+
+      #toJson() to turn complex information to readable json format 
+
+       # ${GITHUB_REPOSITORY}.git is a predefined environment variable in GitHub Actions that represents the repository name in the format "owner/repo". It is used to construct the URL for cloning the repository.
+
+
+        run: |
+          echo "Getting code from the repository"
+          echo "${{ toJson(github) }}"
+          git clone https://github.com/${GITHUB_REPOSITORY}.git
+            
