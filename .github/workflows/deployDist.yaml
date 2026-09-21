@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+      # actions/checkout@v3 it is a GitHub Action that checks out your repository under $GITHUB_WORKSPACE, so your workflow can access it. This action is commonly used in CI/CD workflows to retrieve the code from the repository before running tests, building the application, or deploying it. It ensures that the workflow has access to the latest version of the codebase.         
+        uses: actions/checkout@v3 
 
-      - name: get code from the repository
 
       # | is used to indicate that the following lines are part of a multi-line string. It allows you to write multiple lines of code or text without having to use escape characters for newlines.
 
@@ -26,8 +26,18 @@ jobs:
        # ${GITHUB_REPOSITORY}.git is a predefined environment variable in GitHub Actions that represents the repository name in the format "owner/repo". It is used to construct the URL for cloning the repository.
 
 
-        run: |
-          echo "Getting code from the repository"
-          echo "${{ toJson(github) }}"
-          git clone https://github.com/${GITHUB_REPOSITORY}.git
-            
+       # run: |
+         # echo "Getting code from the repository"
+         # echo "${{ toJson(github) }}"
+         # git clone https://github.com/${GITHUB_REPOSITORY}.git
+
+      - name: Installing node js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+
+      - name: Installing dependencies
+        run: npm ci
+
+      - name: Running tests
+        run: npm test
