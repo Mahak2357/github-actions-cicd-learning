@@ -5,7 +5,10 @@ import App from './App';
 
 test('renders Github Actions heading', () => {
   render(<App />);
-  const headingElement = screen.getByText(/Github Actions/i);
+  const headingElement = screen.getByRole('heading', {
+     name: /Github Actions/i,
+    level: 1,
+    });
   expect(headingElement).toBeInTheDocument();
 });
 
