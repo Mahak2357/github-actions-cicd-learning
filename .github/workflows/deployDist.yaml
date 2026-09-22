@@ -5,7 +5,6 @@
 # We use workflow_dispatch when we want to manually control when the workflow runs. For example, we may push several code changes to GitHub, but we don't want to deploy every change to production immediately. When the application is ready, we can manually trigger the deployment workflow.
 
 name: Deploy Distribution
-
 on:
     push:
         branches:
@@ -15,24 +14,21 @@ on:
           - '.github/workflows/**'
           - README.md
     workflow_dispatch:
-
 jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-      # actions/checkout@v3 it is a GitHub Action that checks out your repository under $GITHUB_WORKSPACE, so your workflow can access it. This action is commonly used in CI/CD workflows to retrieve the code from the repository before running tests, building the application, or deploying it. It ensures that the workflow has access to the latest version of the codebase.         
         uses: actions/checkout@v3 
 
+      # actions/checkout@v3 it is a GitHub Action that checks out your repository under $GITHUB_WORKSPACE, so your workflow can access it. This action is commonly used in CI/CD workflows to retrieve the code from the repository before running tests, building the application, or deploying it. It ensures that the workflow has access to the latest version of the codebase.   
 
       # | is used to indicate that the following lines are part of a multi-line string. It allows you to write multiple lines of code or text without having to use escape characters for newlines.
 
       # ${{ ... }}   is used to access GitHub Actions context and expression syntax. It allows you to retrieve information about the workflow run, repository, and other relevant data.
-
       #toJson() to turn complex information to readable json format 
 
        # ${GITHUB_REPOSITORY}.git is a predefined environment variable in GitHub Actions that represents the repository name in the format "owner/repo". It is used to construct the URL for cloning the repository.
-
 
        # run: |
          # echo "Getting code from the repository"
@@ -43,7 +39,6 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 20
-
 
           # The actions/cache@v4 action is used to cache dependencies in a GitHub Actions workflow. Caching dependencies can significantly speed up the workflow execution by reusing previously downloaded packages instead of fetching them from the internet every time the workflow runs.
       - name: Cache dependencies
@@ -59,8 +54,8 @@ jobs:
       - name: Running tests
         run: npm test
 
-  deploy:
-    needs: tests # used to specify that the deploy job depends on the successful completion of the tests job. It ensures that the deployment only occurs if the tests pass.
+  build:
+    needs: tests # used to specify that the build job depends on the successful completion of the tests job. It ensures that the build only occurs if the tests pass.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -74,8 +69,8 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+             path: ~/.npm
+             key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
       - name: Installing dependencies
         run: npm ci
@@ -83,5 +78,23 @@ jobs:
       - name: Building the application
         run: npm run build
 
+        # Artifacts are used because the GitHub Actions runner is temporary,
+        # and its files/data do not persist after the job ends.
+
+      - name: Uploading build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist # The path specifies the directory or files to be uploaded as artifacts. In this case, it is set to dist, which is the output directory of the build process. The contents of this directory will be packaged and uploaded as artifacts for later use in the workflow.
+
+  deploy:
+    needs: tests # used to specify that the deploy job depends on the successful completion of the tests job. It ensures that the deployment only occurs if the tests pass.
+    runs-on: ubuntu-latest
+    steps:
+      - name: downloading build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist 
       - name: Deploying the application
         run: echo "Deploying the application..."
