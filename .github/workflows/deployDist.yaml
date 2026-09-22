@@ -43,6 +43,7 @@ jobs:
         run: npm test
 
   deploy:
+    needs: tests # used to specify that the deploy job depends on the successful completion of the tests job. It ensures that the deployment only occurs if the tests pass.
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
