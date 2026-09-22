@@ -85,16 +85,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: dist # The path specifies the directory or files to be uploaded as artifacts. In this case, it is set to dist, which is the output directory of the build process. The contents of this directory will be packaged and uploaded as artifacts for later use in the workflow.
+          path: dist/ # The path specifies the directory or files to be uploaded as artifacts. In this case, it is set to dist, which is the output directory of the build process. The contents of this directory will be packaged and uploaded as artifacts for later use in the workflow.
 
   deploy:
-    needs: tests # used to specify that the deploy job depends on the successful completion of the tests job. It ensures that the deployment only occurs if the tests pass.
+    needs: build # used to specify that the deploy job depends on the successful completion of the build job. It ensures that the deployment only occurs if the build is successful.
     runs-on: ubuntu-latest
     steps:
       - name: downloading build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-          path: dist 
+          path: dist/
       - name: Deploying the application
         run: echo "Deploying the application..."
