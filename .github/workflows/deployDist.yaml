@@ -1,10 +1,20 @@
+#on: [push,workflow_dispatch]
+
 #push = it automattically runs the workflow when a push is made to the repository
 #workflow_dispatch= it allows you to manually trigger the workflow from the GitHub Actions tab in your repository
 # We use workflow_dispatch when we want to manually control when the workflow runs. For example, we may push several code changes to GitHub, but we don't want to deploy every change to production immediately. When the application is ready, we can manually trigger the deployment workflow.
 
 name: Deploy Distribution
 
-on: [push,workflow_dispatch]
+on:
+    push:
+        branches:
+          - main
+          - 'feature/**'
+        paths-ignore:
+          - '.github/workflows/**'
+          - README.md
+    workflow_dispatch:
 
 jobs:
   tests:
