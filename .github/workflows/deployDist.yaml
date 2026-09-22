@@ -41,3 +41,23 @@ jobs:
 
       - name: Running tests
         run: npm test
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Installing node js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+
+      - name: Installing dependencies
+        run: npm ci
+
+      - name: Building the application
+        run: npm run build
+
+      - name: Deploying the application
+        run: echo "Deploying the application..."
