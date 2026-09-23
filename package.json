@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://Mahak2357.github.io/github-actions-cicd-learning",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
